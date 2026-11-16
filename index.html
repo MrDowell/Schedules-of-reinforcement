@@ -1,0 +1,773 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Psychology: Schedules of Reinforcement</title>
+<style>
+  :root {
+    --navy: #183153;
+    --blue: #2864a5;
+    --light: #eef4fa;
+    --green: #237a50;
+    --red: #b33b3b;
+    --gray: #64748b;
+    --border: #d7e0ea;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 18px;
+    background: #f3f6fa;
+    color: #263445;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.55;
+  }
+
+  .container {
+    max-width: 850px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 18px rgba(20,40,70,.08);
+  }
+
+  h1, h2, h3 { color: var(--navy); }
+  h1 { margin: 0 0 6px; font-size: 1.8rem; }
+  h2 { margin-top: 0; }
+  .subtitle { color: var(--gray); margin-top: 0; }
+
+  .progress-wrap {
+    margin: 22px 0;
+    background: #e7edf4;
+    height: 10px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--blue);
+    transition: width .25s;
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: var(--gray);
+    font-size: .92rem;
+  }
+
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 18px;
+  }
+
+  .question-number {
+    color: var(--blue);
+    font-weight: bold;
+    font-size: .9rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 8px;
+  }
+
+  .question-text {
+    font-size: 1.12rem;
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+
+  .answers {
+    display: grid;
+    gap: 10px;
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .answer-btn {
+    text-align: left;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    padding: 13px 15px;
+    color: #263445;
+    min-height: 50px;
+    transition: background .15s, border-color .15s;
+  }
+
+  .answer-btn:hover:not(:disabled) {
+    border-color: var(--blue);
+    background: var(--light);
+  }
+
+  .answer-btn:disabled { cursor: default; opacity: 1; }
+  .answer-btn.correct {
+    border-color: var(--green);
+    background: #eaf6ef;
+  }
+  .answer-btn.incorrect {
+    border-color: var(--red);
+    background: #fff0f0;
+  }
+
+  .feedback {
+    display: none;
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 9px;
+    background: var(--light);
+    border-left: 5px solid var(--blue);
+  }
+
+  .feedback.correct-feedback {
+    background: #eaf6ef;
+    border-left-color: var(--green);
+  }
+
+  .feedback.incorrect-feedback {
+    background: #fff0f0;
+    border-left-color: var(--red);
+  }
+
+  .feedback strong { display: block; margin-bottom: 5px; }
+
+  .main-btn {
+    border: 0;
+    background: var(--blue);
+    color: white;
+    padding: 13px 22px;
+    border-radius: 9px;
+    font-weight: bold;
+    margin-top: 20px;
+    min-height: 48px;
+  }
+
+  .main-btn:hover { background: #1d4e82; }
+  .main-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  .secondary-btn {
+    background: #e9eef4;
+    color: var(--navy);
+  }
+
+  .secondary-btn:hover { background: #dce5ef; }
+
+  .hidden { display: none !important; }
+
+  .intro-box, .report-box {
+    background: var(--light);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .intro-box ul { padding-left: 22px; }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .score-item {
+    background: #f3f6fa;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .score-number {
+    display: block;
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: var(--navy);
+  }
+
+  .score-label {
+    color: var(--gray);
+    font-size: .85rem;
+  }
+
+  .mastery {
+    font-size: 1.15rem;
+    font-weight: bold;
+    margin: 14px 0;
+  }
+
+  .mastery.good { color: var(--green); }
+  .mastery.needs-work { color: #a15c12; }
+
+  .topic-result {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topic-result:last-child { border-bottom: 0; }
+
+  .small-note {
+    color: var(--gray);
+    font-size: .9rem;
+  }
+
+  .footer {
+    text-align: center;
+    color: var(--gray);
+    font-size: .82rem;
+    margin-top: 28px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 8px; }
+    .container { padding: 18px 14px; border-radius: 10px; }
+    h1 { font-size: 1.5rem; }
+    .question-card { padding: 16px; }
+    .score-grid { grid-template-columns: 1fr; }
+    .answer-btn { padding: 14px 12px; }
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <header>
+    <h1>Schedules of Reinforcement</h1>
+    <p class="subtitle">AP Psychology · Interactive Learning Tutorial</p>
+  </header>
+
+  <section id="intro">
+    <div class="intro-box">
+      <h2>How this tutorial works</h2>
+      <p>You'll begin with 15 core questions covering schedules of reinforcement. Afterward, the tutorial will identify concepts you may need to review and give you additional practice.</p>
+      <ul>
+        <li>Answer each question and receive immediate feedback.</li>
+        <li>If you miss a question, read the explanation carefully.</li>
+        <li>You may retry questions, but your first answer is what counts toward your score.</li>
+        <li>If needed, you'll receive targeted practice questions based on your mistakes.</li>
+      </ul>
+      <p><strong>Goal:</strong> Earn at least 80% on the 15 core questions.</p>
+    </div>
+    <button class="main-btn" id="start-btn">Begin Tutorial</button>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="status">
+      <span id="section-label">Core Questions</span>
+      <span id="progress-label">Question 1 of 15</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-number" id="question-number">Question 1</div>
+      <p class="question-text" id="question-text"></p>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <button class="main-btn hidden" id="next-btn">Next Question</button>
+    </div>
+  </section>
+
+  <section id="report" class="hidden">
+    <h2>Your Results</h2>
+    <div class="report-box">
+      <div class="score-grid">
+        <div class="score-item">
+          <span class="score-number" id="score-correct">0/15</span>
+          <span class="score-label">First-attempt correct</span>
+        </div>
+        <div class="score-item">
+          <span class="score-number" id="score-percent">0%</span>
+          <span class="score-label">Core question score</span>
+        </div>
+        <div class="score-item">
+          <span class="score-number" id="score-practice">0</span>
+          <span class="score-label">Practice questions completed</span>
+        </div>
+      </div>
+      <p class="mastery" id="mastery-message"></p>
+      <p id="report-summary"></p>
+    </div>
+
+    <div id="practice-section" class="hidden">
+      <h3>Recommended Practice</h3>
+      <p>The following questions are selected based on the concepts you found most challenging.</p>
+      <div id="weakness-list"></div>
+      <button class="main-btn" id="practice-btn">Begin Targeted Practice</button>
+    </div>
+
+    <div id="final-report" class="hidden">
+      <h3>Final Learning Report</h3>
+      <div id="final-details"></div>
+      <button class="main-btn secondary-btn" id="restart-btn">Start Over</button>
+    </div>
+  </section>
+
+  <div class="footer">Your answers stay in this browser session. No student information is collected or transmitted.</div>
+</div>
+
+<script>
+const coreQuestions = [
+  {
+    q: "A student receives a token every time they correctly answer a question in class. Which schedule of reinforcement is being used?",
+    choices: ["Fixed ratio", "Variable ratio", "Continuous reinforcement", "Fixed interval"],
+    answer: 2,
+    category: "ratioInterval",
+    explanation: "The desired behavior is reinforced every single time it occurs. This is continuous reinforcement."
+  },
+  {
+    q: "A factory worker receives a $20 bonus for every 10 products they assemble. Which schedule of reinforcement is being used?",
+    choices: ["Fixed interval", "Fixed ratio", "Variable interval", "Variable ratio"],
+    answer: 1,
+    category: "ratioInterval",
+    explanation: "Reinforcement occurs after a predictable number of responses: every 10 products. That makes it a fixed-ratio schedule."
+  },
+  {
+    q: "A salesperson earns a commission after making an unpredictable number of successful sales. Which schedule of reinforcement is being used?",
+    choices: ["Fixed ratio", "Variable interval", "Fixed interval", "Variable ratio"],
+    answer: 3,
+    category: "fixedVariable",
+    explanation: "The number of sales required before earning a commission changes unpredictably. This is variable ratio."
+  },
+  {
+    q: "A student knows that their psychology teacher gives a short quiz every Friday. The student usually does very little studying early in the week but begins studying much more frequently as Friday approaches. Which schedule of reinforcement best explains this pattern?",
+    choices: ["Variable ratio", "Fixed ratio", "Fixed interval", "Variable interval"],
+    answer: 2,
+    category: "patterns",
+    explanation: "The quiz occurs after a predictable amount of time. Fixed-interval schedules often produce a pattern called scalloping, in which responding increases as the expected reinforcement opportunity approaches. This is sometimes described as just-in-time behavior."
+  },
+  {
+    q: "A person checks their email frequently because important messages arrive at unpredictable times. Which schedule of reinforcement best describes this situation?",
+    choices: ["Fixed ratio", "Variable interval", "Fixed interval", "Variable ratio"],
+    answer: 1,
+    category: "ratioInterval",
+    explanation: "Important messages become available after unpredictable amounts of time. Checking email is reinforced when a new message is found. The timing varies, rather than the number of checks required."
+  },
+  {
+    q: "A salesperson earns a $20 bonus for every third dress they sell. Which schedule of reinforcement is being used?",
+    choices: ["Variable ratio", "Fixed interval", "Fixed ratio", "Variable interval"],
+    answer: 2,
+    category: "ratioInterval",
+    explanation: "The salesperson receives reinforcement after a predictable number of responses: three sales. That is fixed ratio."
+  },
+  {
+    q: "A person playing a game wins a prize after an unpredictable number of attempts. Which schedule of reinforcement best describes the situation?",
+    choices: ["Fixed interval", "Variable interval", "Fixed ratio", "Variable ratio"],
+    answer: 3,
+    category: "fixedVariable",
+    explanation: "The reward comes after an unpredictable number of responses or attempts. This is variable ratio."
+  },
+  {
+    q: "A manager checks in with each employee at exactly 10:00 a.m. every day to review their progress and provide feedback. Employees know that the next check-in will occur at the same time the following day. Which schedule of reinforcement best describes this situation?",
+    choices: ["Fixed ratio", "Variable interval", "Fixed interval", "Variable ratio"],
+    answer: 2,
+    category: "ratioInterval",
+    explanation: "The opportunity for reinforcement or feedback occurs after a predictable amount of time: every 24 hours. This is a fixed-interval schedule."
+  },
+  {
+    q: "A manager checks employee work at unpredictable times. Employees work consistently because they never know when the manager will check. Which schedule of reinforcement is being used?",
+    choices: ["Variable interval", "Fixed interval", "Variable ratio", "Fixed ratio"],
+    answer: 0,
+    category: "fixedVariable",
+    explanation: "The manager's inspections occur after unpredictable amounts of time. This is variable interval. The timing of the check-ins varies, not the number of employee responses."
+  },
+  {
+    q: "A person playing a slot machine wins after an unpredictable number of attempts. Which schedule of reinforcement is being used?",
+    choices: ["Fixed interval", "Variable interval", "Fixed ratio", "Variable ratio"],
+    answer: 3,
+    category: "fixedVariable",
+    explanation: "Winning occurs after an unpredictable number of responses. This is a classic example of variable-ratio reinforcement."
+  },
+  {
+    q: "A student is scrolling through a social media app on their phone. Occasionally, a new and interesting post appears, but the student never knows how many times they will need to scroll before finding one. Which schedule of reinforcement best describes this experience?",
+    choices: ["Fixed interval", "Variable ratio", "Fixed ratio", "Variable interval"],
+    answer: 1,
+    category: "ratioInterval",
+    explanation: "The student encounters rewarding content after an unpredictable number of scrolling responses. The number of responses varies, making this a variable-ratio example."
+  },
+  {
+    q: "A rat receives food after every 10 lever presses. After receiving food, it briefly pauses before pressing the lever again. Which schedule of reinforcement is most likely being used?",
+    choices: ["Variable ratio", "Fixed interval", "Fixed ratio", "Variable interval"],
+    answer: 2,
+    category: "patterns",
+    explanation: "Reinforcement follows a predictable number of responses. Fixed-ratio schedules often produce a brief post-reinforcement pause."
+  },
+  {
+    q: "A rat receives food for the first lever press made after every 30 seconds. The rat gradually increases its lever pressing as the 30-second interval approaches. Which schedule of reinforcement is being used?",
+    choices: ["Variable interval", "Fixed ratio", "Variable ratio", "Fixed interval"],
+    answer: 3,
+    category: "patterns",
+    explanation: "Reinforcement becomes available after a predictable amount of time. Responding often increases as the interval approaches, producing a scalloped pattern."
+  },
+  {
+    q: "A researcher wants to establish a behavior that will be especially resistant to extinction. Which schedule of reinforcement would be the best choice?",
+    choices: ["Continuous reinforcement", "Fixed interval", "Fixed ratio", "Variable ratio"],
+    answer: 3,
+    category: "extinction",
+    explanation: "Behaviors reinforced intermittently, especially on variable-ratio schedules, tend to be highly resistant to extinction."
+  },
+  {
+    q: "A child receives a sticker every time they put away their toys. After several weeks, their parent stops giving stickers. The child's toy-cleaning behavior decreases relatively quickly. Which concept best explains this result?",
+    choices: [
+      "Behavior reinforced continuously is generally more susceptible to extinction than intermittently reinforced behavior.",
+      "Variable interval schedules produce the fastest extinction.",
+      "Fixed ratio schedules produce the greatest resistance to extinction.",
+      "Reinforcement schedules have no effect on extinction."
+    ],
+    answer: 0,
+    category: "extinction",
+    explanation: "When a behavior has always been reinforced, the absence of reinforcement is more noticeable. Intermittently reinforced behaviors tend to persist longer when reinforcement stops."
+  }
+];
+
+const practiceQuestions = [
+  {
+    q: "A worker receives a bonus after completing exactly 20 customer orders. Is reinforcement based on the number of responses or the passage of time?",
+    choices: ["Number of responses", "Passage of time"],
+    answer: 0,
+    category: "ratioInterval",
+    explanation: "The worker must complete a certain number of orders. Schedules based on the number of responses are ratio schedules."
+  },
+  {
+    q: "A student receives a notification after waiting a set amount of time. The notification becomes available after 15 minutes, regardless of how many times the student checks the phone. Is this ratio or interval?",
+    choices: ["Ratio", "Interval"],
+    answer: 1,
+    category: "ratioInterval",
+    explanation: "The important factor is the passage of time. That makes it an interval schedule."
+  },
+  {
+    q: "A coffee shop gives a free drink after every 10 purchases. Which schedule is this?",
+    choices: ["Fixed ratio", "Variable ratio"],
+    answer: 0,
+    category: "fixedVariable",
+    explanation: "The customer knows exactly how many purchases are needed. The number of responses is predictable, so this is fixed ratio."
+  },
+  {
+    q: "A person receives a prize after an unpredictable amount of time spent waiting for a raffle drawing. Which schedule is this?",
+    choices: ["Fixed interval", "Variable interval"],
+    answer: 1,
+    category: "fixedVariable",
+    explanation: "The amount of time before the opportunity for reinforcement varies unpredictably. This is variable interval."
+  },
+  {
+    q: "A rat receives food after every fifth lever press. After receiving food, it pauses briefly before pressing again. Which schedule is most likely responsible for this pattern?",
+    choices: ["Fixed ratio", "Fixed interval"],
+    answer: 0,
+    category: "patterns",
+    explanation: "A fixed-ratio schedule reinforces after a set number of responses. A brief pause after reinforcement is common."
+  },
+  {
+    q: "A student takes a quiz at the same time every Friday. Their studying increases as Friday approaches. What response pattern is associated with this schedule?",
+    choices: ["A steady response rate throughout the week", "A gradual increase in responding as the quiz approaches"],
+    answer: 1,
+    category: "patterns",
+    explanation: "Fixed-interval schedules often produce scalloping: responding increases as the predictable time for reinforcement approaches."
+  },
+  {
+    q: "A dog receives a treat every single time it sits when asked. The owner suddenly stops giving treats. Compared with a dog that received treats only occasionally, which dog would generally stop sitting sooner?",
+    choices: ["The dog reinforced every time", "The dog reinforced only occasionally"],
+    answer: 0,
+    category: "extinction",
+    explanation: "Continuous reinforcement generally leads to faster extinction when reinforcement stops. Intermittently reinforced behaviors tend to persist longer."
+  },
+  {
+    q: "A person continues playing a game even after several attempts without winning. They have become accustomed to rewards appearing after an unpredictable number of attempts. Which schedule is likely involved?",
+    choices: ["Fixed interval", "Variable ratio"],
+    answer: 1,
+    category: "extinction",
+    explanation: "Variable-ratio reinforcement is especially resistant to extinction because the next response could produce a reward."
+  },
+  {
+    q: "A gym gives a member a free month after every 12 visits. Which schedule best describes this reward?",
+    choices: ["Fixed ratio", "Fixed interval", "Variable ratio", "Variable interval"],
+    answer: 0,
+    category: "ratioInterval",
+    explanation: "The reward follows a predictable number of visits. That is fixed ratio."
+  },
+  {
+    q: "A person waits for a bus that arrives at unpredictable times. They check the bus stop display periodically because the next bus could arrive at any time. Which schedule best describes the opportunity to catch the bus?",
+    choices: ["Fixed ratio", "Variable ratio", "Fixed interval", "Variable interval"],
+    answer: 3,
+    category: "fixedVariable",
+    explanation: "The bus becomes available after an unpredictable amount of time. This is variable interval. The key feature is the changing time between opportunities."
+  }
+];
+
+const categoryNames = {
+  ratioInterval: "Ratio vs. Interval",
+  fixedVariable: "Fixed vs. Variable",
+  patterns: "Response Patterns",
+  extinction: "Extinction"
+};
+
+let phase = "core";
+let currentIndex = 0;
+let firstAnswers = [];
+let practiceAnswers = [];
+let practiceSet = [];
+let currentQuestion = null;
+let answered = false;
+let practiceCorrect = 0;
+
+const $ = id => document.getElementById(id);
+
+$("start-btn").addEventListener("click", startTutorial);
+$("next-btn").addEventListener("click", nextQuestion);
+$("practice-btn").addEventListener("click", startPractice);
+$("restart-btn").addEventListener("click", restart);
+
+function startTutorial() {
+  phase = "core";
+  currentIndex = 0;
+  firstAnswers = [];
+  practiceAnswers = [];
+  practiceSet = [];
+  practiceCorrect = 0;
+  $("intro").classList.add("hidden");
+  $("report").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const questions = phase === "core" ? coreQuestions : practiceSet;
+  currentQuestion = questions[currentIndex];
+
+  const total = questions.length;
+  $("section-label").textContent =
+    phase === "core" ? "Core Questions" : "Targeted Practice";
+  $("progress-label").textContent =
+    `Question ${currentIndex + 1} of ${total}`;
+  $("progress-bar").style.width = `${(currentIndex / total) * 100}%`;
+
+  $("question-number").textContent =
+    `${phase === "core" ? "Core" : "Practice"} Question ${currentIndex + 1}`;
+  $("question-text").textContent = currentQuestion.q;
+  $("answers").innerHTML = "";
+  $("feedback").style.display = "none";
+  $("feedback").className = "feedback";
+  $("next-btn").classList.add("hidden");
+
+  currentQuestion.choices.forEach((choice, index) => {
+    const button = document.createElement("button");
+    button.className = "answer-btn";
+    button.textContent = `${String.fromCharCode(65 + index)}. ${choice}`;
+    button.addEventListener("click", () => chooseAnswer(index));
+    $("answers").appendChild(button);
+  });
+}
+
+function chooseAnswer(selected) {
+  if (answered) return;
+  answered = true;
+
+  const isCorrect = selected === currentQuestion.answer;
+  const buttons = [...$("answers").children];
+
+  buttons.forEach((button, index) => {
+    button.disabled = true;
+    if (index === currentQuestion.answer) button.classList.add("correct");
+    if (index === selected && !isCorrect) button.classList.add("incorrect");
+  });
+
+  if (phase === "core") {
+    firstAnswers[currentIndex] = {
+      correct: isCorrect,
+      category: currentQuestion.category
+    };
+  } else {
+    practiceAnswers[currentIndex] = isCorrect;
+    if (isCorrect) practiceCorrect++;
+  }
+
+  const feedback = $("feedback");
+  feedback.style.display = "block";
+  feedback.classList.add(isCorrect ? "correct-feedback" : "incorrect-feedback");
+
+  const heading = isCorrect ? "Correct!" : "Not quite.";
+  const correctLetter = String.fromCharCode(65 + currentQuestion.answer);
+  const correctText = currentQuestion.choices[currentQuestion.answer];
+
+  feedback.innerHTML = "";
+  const strong = document.createElement("strong");
+  strong.textContent = isCorrect ? heading : `${heading} The correct answer is ${correctLetter}. ${correctText}`;
+  const explanation = document.createElement("div");
+  explanation.textContent = currentQuestion.explanation;
+  feedback.append(strong, explanation);
+
+  $("next-btn").textContent =
+    currentIndex === (phase === "core" ? coreQuestions : practiceSet).length - 1
+      ? (phase === "core" ? "See My Results" : "View Final Report")
+      : "Next Question";
+  $("next-btn").classList.remove("hidden");
+}
+
+function nextQuestion() {
+  currentIndex++;
+  const questions = phase === "core" ? coreQuestions : practiceSet;
+
+  if (currentIndex < questions.length) {
+    showQuestion();
+  } else if (phase === "core") {
+    showCoreReport();
+  } else {
+    showFinalReport();
+  }
+}
+
+function getWeakCategories() {
+  const missed = {};
+  firstAnswers.forEach((answer, index) => {
+    if (!answer.correct) {
+      missed[answer.category] = (missed[answer.category] || 0) + 1;
+    }
+  });
+  return missed;
+}
+
+function showCoreReport() {
+  $("quiz").classList.add("hidden");
+  $("report").classList.remove("hidden");
+
+  const correct = firstAnswers.filter(a => a.correct).length;
+  const percent = Math.round((correct / coreQuestions.length) * 100);
+  const weak = getWeakCategories();
+
+  $("score-correct").textContent = `${correct}/15`;
+  $("score-percent").textContent = `${percent}%`;
+  $("score-practice").textContent = "0";
+
+  const mastery = $("mastery-message");
+  mastery.textContent = percent >= 80
+    ? "You reached the 80% mastery goal!"
+    : "You haven't reached the 80% mastery goal yet.";
+  mastery.className = `mastery ${percent >= 80 ? "good" : "needs-work"}`;
+
+  $("report-summary").textContent =
+    `You answered ${correct} of the 15 core questions correctly on your first attempt. ` +
+    (percent >= 80
+      ? "You demonstrated a solid understanding of schedules of reinforcement."
+      : "The additional practice below will help strengthen your understanding.");
+
+  const weakKeys = Object.keys(weak);
+  if (weakKeys.length === 0) {
+    $("practice-section").classList.add("hidden");
+    $("final-report").classList.remove("hidden");
+    $("final-details").textContent =
+      "Excellent work! You answered all 15 core questions correctly. You have no identified areas for additional practice.";
+    $("score-practice").textContent = "0";
+    return;
+  }
+
+  $("practice-section").classList.remove("hidden");
+  $("final-report").classList.add("hidden");
+
+  const list = $("weakness-list");
+  list.innerHTML = "";
+  weakKeys.forEach(key => {
+    const item = document.createElement("div");
+    item.className = "topic-result";
+    item.textContent = `${categoryNames[key]}: ${weak[key]} missed question${weak[key] === 1 ? "" : "s"}`;
+    list.appendChild(item);
+  });
+
+  // Select practice questions related to missed concepts.
+  // Include all matching questions, with a maximum of 10.
+  practiceSet = practiceQuestions.filter(q => weakKeys.includes(q.category)).slice(0, 10);
+  $("practice-btn").textContent =
+    `Begin ${practiceSet.length} Targeted Practice Question${practiceSet.length === 1 ? "" : "s"}`;
+}
+
+function startPractice() {
+  if (!practiceSet.length) {
+    showFinalReport();
+    return;
+  }
+  phase = "practice";
+  currentIndex = 0;
+  practiceAnswers = [];
+  practiceCorrect = 0;
+  $("report").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  showQuestion();
+}
+
+function showFinalReport() {
+  $("quiz").classList.add("hidden");
+  $("report").classList.remove("hidden");
+  $("practice-section").classList.add("hidden");
+  $("final-report").classList.remove("hidden");
+
+  const coreCorrect = firstAnswers.filter(a => a.correct).length;
+  const corePercent = Math.round((coreCorrect / coreQuestions.length) * 100);
+  const practiceTotal = practiceSet.length;
+  const practicePercent = practiceTotal
+    ? Math.round((practiceCorrect / practiceTotal) * 100)
+    : 0;
+
+  $("score-correct").textContent = `${coreCorrect}/15`;
+  $("score-percent").textContent = `${corePercent}%`;
+  $("score-practice").textContent = `${practiceCorrect}/${practiceTotal}`;
+
+  const details = $("final-details");
+  details.innerHTML = "";
+
+  const summary = document.createElement("p");
+  summary.textContent =
+    `Core questions: ${coreCorrect}/15 (${corePercent}%). ` +
+    `Targeted practice: ${practiceCorrect}/${practiceTotal} (${practicePercent}%).`;
+  details.appendChild(summary);
+
+  const mastery = document.createElement("p");
+  mastery.className = `mastery ${corePercent >= 80 ? "good" : "needs-work"}`;
+  mastery.textContent = corePercent >= 80
+    ? "You met the 80% core-question mastery goal."
+    : "You did not yet meet the 80% core-question mastery goal.";
+  details.appendChild(mastery);
+
+  const note = document.createElement("p");
+  note.textContent = practiceTotal
+    ? "Use your feedback and practice results to review any concepts that are still challenging."
+    : "You answered all core questions correctly. Great work!";
+  details.appendChild(note);
+
+  const missed = getWeakCategories();
+  if (Object.keys(missed).length) {
+    const heading = document.createElement("h4");
+    heading.textContent = "Concepts to keep reviewing";
+    details.appendChild(heading);
+    Object.keys(missed).forEach(key => {
+      const line = document.createElement("p");
+      line.textContent = `${categoryNames[key]}: ${missed[key]} missed core question${missed[key] === 1 ? "" : "s"}.`;
+      details.appendChild(line);
+    });
+  }
+}
+
+function restart() {
+  $("report").classList.add("hidden");
+  $("final-report").classList.add("hidden");
+  $("practice-section").classList.add("hidden");
+  $("intro").classList.remove("hidden");
+  $("quiz").classList.add("hidden");
+  $("progress-bar").style.width = "0%";
+}
+</script>
+</body>
+</html>
